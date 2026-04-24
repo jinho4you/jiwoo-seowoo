@@ -10,10 +10,6 @@
   <style>
     body { font-family: 'Noto Sans KR', sans-serif; }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(28px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
     @keyframes float {
       0%, 100% { transform: translateY(0); }
       50%       { transform: translateY(-12px); }
@@ -22,27 +18,38 @@
       0%   { background-position: -200% center; }
       100% { background-position:  200% center; }
     }
-    @keyframes bounceDot {
-      0%, 100% { transform: translateY(0);    opacity: .5; }
-      50%       { transform: translateY(-8px); opacity: 1; }
-    }
     @keyframes popIn {
-      0%   { opacity: 0; transform: scale(.8) translateY(16px); }
-      60%  { transform: scale(1.04) translateY(-2px); }
+      0%   { opacity: 0; transform: scale(.82) translateY(24px); }
+      65%  { transform: scale(1.03) translateY(-2px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     @keyframes pulse-ring {
-      0%   { transform: scale(.95); box-shadow: 0 0 0 0 rgba(139,92,246,.6); }
-      70%  { transform: scale(1);   box-shadow: 0 0 0 16px rgba(139,92,246,0); }
-      100% { transform: scale(.95); box-shadow: 0 0 0 0  rgba(139,92,246,0); }
+      0%   { box-shadow: 0 0 0 0 rgba(139,92,246,.7); }
+      70%  { box-shadow: 0 0 0 18px rgba(139,92,246,0); }
+      100% { box-shadow: 0 0 0 0  rgba(139,92,246,0); }
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pokeball-shake {
+      0%,100% { transform: rotate(0deg) translateY(0); }
+      15%      { transform: rotate(-18deg) translateY(-6px); }
+      35%      { transform: rotate(14deg) translateY(-10px); }
+      55%      { transform: rotate(-10deg) translateY(-6px); }
+      75%      { transform: rotate(6deg) translateY(-2px); }
+    }
+    @keyframes holo {
+      0%   { background-position: 0% 50%; opacity:.5; }
+      50%  { background-position: 100% 50%; opacity:.9; }
+      100% { background-position: 0% 50%; opacity:.5; }
+    }
+    @keyframes pokemon-glow {
+      0%,100% { filter: drop-shadow(0 6px 20px rgba(0,0,0,.6)) brightness(1); }
+      50%      { filter: drop-shadow(0 6px 32px rgba(255,255,255,.18)) brightness(1.12); }
+    }
 
     .float      { animation: float 3.2s ease-in-out infinite; }
     .float-slow { animation: float 4.5s ease-in-out infinite; }
 
     .shimmer-text {
-      background: linear-gradient(90deg, #fff 0%, #c4b5fd 45%, #818cf8 55%, #fff 100%);
+      background: linear-gradient(90deg,#fff 0%,#c4b5fd 45%,#818cf8 55%,#fff 100%);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -50,11 +57,9 @@
       animation: shimmer 2.4s linear infinite;
     }
 
-    .trait-btn {
-      transition: all .18s ease;
-    }
+    .trait-btn { transition: all .18s ease; }
     .trait-btn.selected {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      background: linear-gradient(135deg,#7c3aed,#4f46e5);
       color: #fff;
       border-color: transparent;
       transform: scale(1.06);
@@ -63,74 +68,100 @@
 
     .career-card {
       opacity: 0;
-      animation: popIn .55s cubic-bezier(.22,1,.36,1) forwards;
+      animation: popIn .6s cubic-bezier(.22,1,.36,1) forwards;
     }
 
-    .dot {
-      animation: bounceDot .6s ease-in-out infinite;
-    }
-    .dot:nth-child(2) { animation-delay: .12s; }
-    .dot:nth-child(3) { animation-delay: .24s; }
-
-    .pulse-btn { animation: pulse-ring 2s ease infinite; }
-
-    .spinner {
-      width: 36px; height: 36px;
-      border: 4px solid rgba(139,92,246,.25);
-      border-top-color: #7c3aed;
+    /* Pokéball */
+    .pokeball {
+      width: 64px; height: 64px;
       border-radius: 50%;
-      animation: spin .8s linear infinite;
+      background: linear-gradient(to bottom, #ef4444 50%, #f9fafb 50%);
+      border: 5px solid #111827;
+      position: relative;
+      animation: pokeball-shake 1s ease-in-out infinite;
+    }
+    .pokeball::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: -5px;
+      width: calc(100% + 10px); height: 5px;
+      background: #111827;
+      transform: translateY(-50%);
+    }
+    .pokeball::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 16px; height: 16px;
+      background: #f9fafb;
+      border-radius: 50%;
+      border: 4px solid #111827;
+      z-index: 5;
     }
 
-    input:focus { outline: none; }
+    /* Holographic card shimmer */
+    .holo {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        115deg,
+        transparent 20%,
+        rgba(255,255,255,.06) 40%,
+        rgba(255,255,255,.13) 50%,
+        rgba(255,255,255,.06) 60%,
+        transparent 80%
+      );
+      background-size: 200% 200%;
+      animation: holo 3.5s ease infinite;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .pokemon-img { animation: pokemon-glow 3s ease-in-out infinite; }
+    .pulse-btn   { animation: pulse-ring 2s ease infinite; }
+    input:focus  { outline: none; }
+    .pixel       { image-rendering: pixelated; image-rendering: crisp-edges; }
   </style>
 </head>
 <body class="bg-[#0a0a0f] min-h-screen text-white">
 
-  <!-- ── HERO ─────────────────────────────────────────── -->
+  <!-- HERO -->
   <header class="relative overflow-hidden">
     <div class="absolute inset-0 bg-gradient-to-br from-violet-950 via-indigo-950 to-[#0a0a0f]"></div>
-    <!-- glow blobs -->
     <div class="absolute top-0 left-1/4 w-72 h-72 bg-violet-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute top-10 right-1/4 w-56 h-56 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-10 right-1/4 w-56 h-56 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- floating emojis -->
-    <span class="absolute top-6  left-8  text-3xl float"      style="animation-delay:.0s">✨</span>
-    <span class="absolute top-14 right-10 text-2xl float-slow" style="animation-delay:.4s">🚀</span>
-    <span class="absolute top-28 left-1/3 text-xl float"       style="animation-delay:.9s">💫</span>
-    <span class="absolute bottom-8 right-8 text-2xl float"     style="animation-delay:.6s">🌟</span>
-    <span class="absolute bottom-4 left-12 text-xl float-slow" style="animation-delay:1.2s">🎯</span>
+    <span class="absolute top-6  left-8   text-3xl float"      style="animation-delay:.0s">✨</span>
+    <span class="absolute top-14 right-10 text-2xl float-slow" style="animation-delay:.4s">⚡</span>
+    <span class="absolute top-28 left-1/3 text-xl  float"      style="animation-delay:.9s">🌟</span>
+    <span class="absolute bottom-8 right-8 text-2xl float"     style="animation-delay:.6s">💫</span>
+    <span class="absolute bottom-4 left-12 text-xl float-slow" style="animation-delay:1.2s">🔮</span>
 
     <div class="relative max-w-xl mx-auto px-4 pt-14 pb-20 text-center">
       <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 text-xs text-violet-300 font-bold tracking-widest uppercase mb-6">
-        🔮 미래 직업 탐색기
+        🎮 포켓몬이 알려주는 미래 직업
       </div>
-      <h1 class="font-black leading-tight mb-3">
+      <h1 class="font-black leading-tight mb-4">
         <span class="block text-5xl md:text-7xl shimmer-text">커서 뭐 되지?</span>
       </h1>
       <p class="text-violet-300 text-base md:text-lg">
-        이름이랑 좋아하는 걸 알려주면<br>딱 맞는 직업 <strong class="text-white">3가지</strong>를 찾아줄게! 🎉
+        포켓몬이 <strong class="text-white">딱 맞는 직업</strong>을 찾아줄게! 🎉<br>
+        <span class="text-sm text-violet-400">이름이랑 좋아하는 걸 알려줘</span>
       </p>
     </div>
   </header>
 
-  <!-- ── MAIN ──────────────────────────────────────────── -->
+  <!-- MAIN -->
   <main class="max-w-xl mx-auto px-4 -mt-8 pb-24">
 
     <!-- Input Card -->
     <section id="formSection" class="bg-gray-900 border border-gray-800 rounded-3xl p-6 md:p-8 shadow-2xl">
-
-      <!-- Name -->
       <label class="block text-xs font-black text-violet-400 tracking-widest uppercase mb-2">이름</label>
       <input
-        id="nameInput"
-        type="text"
-        placeholder="지우서우"
-        maxlength="10"
+        id="nameInput" type="text" placeholder="지우서우" maxlength="10"
         class="w-full bg-gray-800 border-2 border-gray-700 rounded-2xl px-5 py-4 text-white text-lg placeholder-gray-600 focus:border-violet-500 focus:ring-4 focus:ring-violet-500/20 transition-all mb-6"
       >
 
-      <!-- Traits -->
       <label class="block text-xs font-black text-violet-400 tracking-widest uppercase mb-3">좋아하는 것 고르기</label>
       <div class="flex flex-wrap gap-2 mb-7">
         <button class="trait-btn px-4 py-2 rounded-full border-2 border-gray-700 bg-gray-800 text-gray-300 text-sm font-bold" data-trait="그림">🎨 그림 그리기</button>
@@ -147,51 +178,37 @@
         <button class="trait-btn px-4 py-2 rounded-full border-2 border-gray-700 bg-gray-800 text-gray-300 text-sm font-bold" data-trait="친구">🤝 친구 사귀기</button>
       </div>
 
-      <!-- CTA -->
       <button
-        id="submitBtn"
         onclick="handleSubmit()"
         class="pulse-btn w-full py-5 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-black text-xl rounded-2xl shadow-lg hover:from-violet-500 hover:to-indigo-500 transition-all duration-200 hover:scale-[1.02] active:scale-[.98]"
       >
-        🔮 내 미래 직업 찾기!
+        🎮 포켓몬한테 물어보기!
       </button>
     </section>
 
-    <!-- Loading -->
-    <section id="loading" class="hidden text-center py-16">
-      <div class="flex justify-center mb-5">
-        <div class="text-6xl float">🔮</div>
+    <!-- Loading (Pokéball) -->
+    <section id="loading" class="hidden text-center py-20">
+      <div class="flex justify-center mb-7">
+        <div class="pokeball"></div>
       </div>
-      <p id="loadingMsg" class="text-violet-300 font-bold text-lg mb-6">운명을 분석 중...</p>
-      <div class="flex justify-center gap-3 mb-6">
-        <div class="dot w-3 h-3 rounded-full bg-violet-500"></div>
-        <div class="dot w-3 h-3 rounded-full bg-indigo-500"></div>
-        <div class="dot w-3 h-3 rounded-full bg-purple-400"></div>
-      </div>
-      <div class="flex justify-center"><div class="spinner"></div></div>
+      <p id="loadingMsg" class="text-violet-300 font-bold text-lg mb-2">포켓몬을 찾는 중...</p>
+      <p class="text-gray-600 text-sm">잠깐만 기다려줘!</p>
     </section>
 
     <!-- Results -->
     <section id="results" class="hidden">
       <div class="text-center mb-8">
-        <p class="text-xs text-violet-400 font-black tracking-widest uppercase mb-2">분석 완료 ✨</p>
+        <p class="text-xs text-violet-400 font-black tracking-widest uppercase mb-2">포켓몬 분석 완료 ✨</p>
         <h2 id="resultTitle" class="text-2xl md:text-3xl font-black text-white leading-snug"></h2>
       </div>
 
-      <div id="cardsContainer" class="flex flex-col gap-5"></div>
+      <div id="cardsContainer" class="flex flex-col gap-6"></div>
 
-      <!-- Actions -->
       <div class="mt-8 flex gap-3">
-        <button
-          onclick="resetForm()"
-          class="flex-1 py-4 border-2 border-gray-700 text-gray-300 font-bold rounded-2xl hover:border-violet-500 hover:text-violet-300 transition-all active:scale-95"
-        >
+        <button onclick="resetForm()" class="flex-1 py-4 border-2 border-gray-700 text-gray-300 font-bold rounded-2xl hover:border-violet-500 hover:text-violet-300 transition-all active:scale-95">
           🔄 다시 하기
         </button>
-        <button
-          onclick="shareResult(this)"
-          class="flex-1 py-4 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all hover:scale-[1.02] active:scale-95"
-        >
+        <button onclick="shareResult(this)" class="flex-1 py-4 bg-gradient-to-r from-pink-600 to-rose-600 text-white font-bold rounded-2xl hover:opacity-90 transition-all hover:scale-[1.02] active:scale-95">
           📤 공유하기
         </button>
       </div>
@@ -200,135 +217,182 @@
   </main>
 
   <script>
-    // ── Trait toggle ─────────────────────────────────────
     document.querySelectorAll('.trait-btn').forEach(btn => {
       btn.addEventListener('click', () => btn.classList.toggle('selected'));
     });
 
-    // ── Career database ───────────────────────────────────
     const CAREERS = [
       {
-        emoji: '🎮', title: '게임 개발자',
-        from: '#6d28d9', to: '#4338ca',
+        title: '게임 개발자',
+        from: '#2e1065', to: '#1e1b4b',
         badge: '🔥 초인기 직업',
         desc: '세상에 없던 게임 세계를 직접 만들어요. 아이디어 하나가 수백만 명을 즐겁게 해요!',
         tip: '요즘은 AI를 활용해 혼자서도 게임을 만들 수 있어요.',
-        traits: ['게임', '컴퓨터', '수학', '그림']
+        traits: ['게임', '컴퓨터', '수학', '그림'],
+        pokemon: {
+          id: 137, name: '포리곤', type: '💻 노말타입', typeColor: '#6366f1',
+          quote: '포리포리! 데이터가 말해줘. 넌 분명 게임 개발자야! 포리!'
+        }
       },
       {
-        emoji: '🎨', title: '웹툰 작가',
-        from: '#db2777', to: '#e11d48',
+        title: '웹툰 작가',
+        from: '#4a0520', to: '#881337',
         badge: '✨ 창의력 폭발',
         desc: '그림과 이야기로 전 세계 독자를 감동시켜요. 내 캐릭터가 드라마로 만들어질 수도!',
         tip: '한국 웹툰은 넷플릭스에서도 볼 수 있을 만큼 글로벌해요.',
-        traits: ['그림', '책', '음악', '여행']
+        traits: ['그림', '책', '음악', '여행'],
+        pokemon: {
+          id: 235, name: '스매어글', type: '🎨 노말타입', typeColor: '#d97706',
+          quote: '스매어글! 나처럼 붓으로 온 세상을 물들여봐! 스매어!'
+        }
       },
       {
-        emoji: '🚀', title: '우주비행사',
-        from: '#1d4ed8', to: '#4338ca',
+        title: '우주비행사',
+        from: '#0c0a1e', to: '#1e3a8a',
         badge: '🌙 꿈의 직업',
         desc: '실제로 우주에서 지구를 내려다보는 사람! 용감한 탐험가에게 딱 맞아요.',
         tip: '민간 우주여행 시대가 열리며 우주비행사 수요가 늘고 있어요.',
-        traits: ['과학', '운동', '여행', '수학']
+        traits: ['과학', '운동', '여행', '수학'],
+        pokemon: {
+          id: 337, name: '루나톤', type: '🌙 바위/에스퍼', typeColor: '#4338ca',
+          quote: '...루나. (달에서 기다릴게. 같이 우주를 탐험해.)'
+        }
       },
       {
-        emoji: '🤖', title: 'AI 엔지니어',
-        from: '#0e7490', to: '#0f766e',
+        title: 'AI 엔지니어',
+        from: '#3b0764', to: '#4a044e',
         badge: '💎 미래 직업 1위',
         desc: 'ChatGPT 같은 AI를 직접 만드는 사람! 세상을 바꾸는 기술의 주인공이에요.',
         tip: '2030년까지 AI 엔지니어 수요가 300% 이상 늘어날 전망이에요.',
-        traits: ['컴퓨터', '수학', '과학', '책']
+        traits: ['컴퓨터', '수학', '과학', '책'],
+        pokemon: {
+          id: 474, name: '포리곤Z', type: '🔮 노말타입', typeColor: '#a855f7',
+          quote: '시스템.분석.완료. 너의.미래.는.AI.야. 오류없음.'
+        }
       },
       {
-        emoji: '🎵', title: '뮤지션 / 프로듀서',
-        from: '#d97706', to: '#ea580c',
+        title: '뮤지션 / 프로듀서',
+        from: '#4a0020', to: '#9f1239',
         badge: '🎤 감성 직업',
         desc: '내가 만든 음악이 차트 1위에! 음악으로 세상 모든 감정을 표현하는 아티스트예요.',
         tip: '스트리밍 플랫폼 덕분에 집에서도 전 세계 팬을 만날 수 있어요.',
-        traits: ['음악', '그림', '친구', '여행']
+        traits: ['음악', '그림', '친구', '여행'],
+        pokemon: {
+          id: 39, name: '푸린', type: '🌸 노말/페어리', typeColor: '#ec4899',
+          quote: '푸~린♪ 나랑 같이 노래해요~ 온 세상이 우리 무대야♪'
+        }
       },
       {
-        emoji: '🐾', title: '수의사',
-        from: '#15803d', to: '#0f766e',
+        title: '수의사',
+        from: '#052e16', to: '#064e3b',
         badge: '💚 따뜻한 직업',
         desc: '아픈 동물을 고쳐주는 동물들의 영웅! 강아지·고양이부터 사자·고래까지 케어해요.',
         tip: '반려동물 인구가 늘면서 수의사 수요도 매년 증가하고 있어요.',
-        traits: ['동물', '과학', '친구', '여행']
+        traits: ['동물', '과학', '친구', '여행'],
+        pokemon: {
+          id: 113, name: '럭키', type: '💊 노말타입', typeColor: '#10b981',
+          quote: '럭키럭키! 아픈 친구들이 너를 기다리고 있어! 럭~키!'
+        }
       },
       {
-        emoji: '👨‍🍳', title: '셰프 / 푸드 크리에이터',
-        from: '#dc2626', to: '#db2777',
+        title: '셰프 / 푸드 크리에이터',
+        from: '#431407', to: '#7c2d12',
         badge: '🍽️ 맛있는 직업',
         desc: '레시피 하나로 전 세계를 감동시킬 수 있어요. 요리방송·먹방으로 스타가 될 수도!',
         tip: '요리 유튜버 중 구독자 수백만 명인 사람이 엄청 많아요.',
-        traits: ['요리', '여행', '친구', '그림']
+        traits: ['요리', '여행', '친구', '그림'],
+        pokemon: {
+          id: 143, name: '잠만보', type: '😴 노말타입', typeColor: '#d97706',
+          quote: '잠...만보... 맛있는 거 만들면... 내가 먹어줄게...'
+        }
       },
       {
-        emoji: '🏆', title: '프로 스포츠 선수',
-        from: '#ca8a04', to: '#d97706',
+        title: '프로 스포츠 선수',
+        from: '#431407', to: '#92400e',
         badge: '💪 에너지 폭발',
         desc: '경기장에서 수만 명의 함성을 받는 그 주인공! e스포츠 프로게이머도 포함이에요.',
         tip: 'e스포츠 선수 연봉이 웬만한 직장인보다 높은 경우가 많아요.',
-        traits: ['운동', '게임', '친구', '여행']
+        traits: ['운동', '게임', '친구', '여행'],
+        pokemon: {
+          id: 815, name: '에이스번', type: '🔥 화염타입', typeColor: '#f97316',
+          quote: '에이스번! 경기장의 주인공은 바로 너야, GO GO!'
+        }
       },
       {
-        emoji: '🏗️', title: '건축가',
-        from: '#475569', to: '#334155',
+        title: '건축가',
+        from: '#0f172a', to: '#1e3a8a',
         badge: '🏙️ 멋진 직업',
         desc: '서울 한강변 멋진 건물들이 모두 건축가의 작품이에요. 도시의 풍경을 디자인해요!',
         tip: '친환경·스마트 건물 설계가 요즘 가장 주목받는 분야예요.',
-        traits: ['그림', '수학', '여행', '과학']
+        traits: ['그림', '수학', '여행', '과학'],
+        pokemon: {
+          id: 376, name: '메타그로스', type: '⚙️ 강철/에스퍼', typeColor: '#3b82f6',
+          quote: '...(강철 같은 의지로 아름다운 도시를 설계해라.)'
+        }
       },
       {
-        emoji: '📱', title: '스타트업 창업가',
-        from: '#7c3aed', to: '#db2777',
+        title: '스타트업 창업가',
+        from: '#1e1b4b', to: '#4a044e',
         badge: '🚀 도전 직업',
         desc: '카카오·네이버 같은 회사를 직접 만드는 사람! 아이디어 하나가 세상을 바꿔요.',
         tip: '20대 창업으로 수백억을 번 사람들이 이미 많아요.',
-        traits: ['컴퓨터', '수학', '친구', '게임']
+        traits: ['컴퓨터', '수학', '친구', '게임'],
+        pokemon: {
+          id: 133, name: '이브이', type: '🌿 노말타입', typeColor: '#92400e',
+          quote: '이브이! 나처럼 가능성이 무한해~ 뭐든 될 수 있어!'
+        }
       },
       {
-        emoji: '🔬', title: '과학자 / 연구원',
-        from: '#1d4ed8', to: '#6d28d9',
+        title: '과학자 / 연구원',
+        from: '#0f0c29', to: '#302b63',
         badge: '🧬 탐구 직업',
         desc: '세상의 비밀을 인류 최초로 발견하는 사람! 노벨상을 받는 그 주인공이 될 수도!',
         tip: '한국 과학자들이 지금 이 순간도 노벨상 연구를 진행 중이에요.',
-        traits: ['과학', '책', '수학', '컴퓨터']
+        traits: ['과학', '책', '수학', '컴퓨터'],
+        pokemon: {
+          id: 150, name: '뮤츠', type: '🔮 에스퍼타입', typeColor: '#9333ea',
+          quote: '흥... 과학이야말로 진정한 힘이다. 그 길을 걸어라.'
+        }
       },
       {
-        emoji: '🌍', title: '여행 크리에이터',
-        from: '#0f766e', to: '#0369a1',
+        title: '여행 크리에이터',
+        from: '#0c1a6e', to: '#0c4a6e',
         badge: '✈️ 가장 자유로운 직업',
         desc: '전 세계를 여행하며 영상 찍는 게 직업이에요! 여행하면서 돈 버는 꿈의 라이프.',
         tip: '여행 유튜버 중 월 수입이 1000만 원을 넘는 사람도 많아요.',
-        traits: ['여행', '그림', '친구', '음악']
+        traits: ['여행', '그림', '친구', '음악'],
+        pokemon: {
+          id: 380, name: '라티아스', type: '🐉 드래곤/에스퍼', typeColor: '#dc2626',
+          quote: '라티아~스♡ 온 세상을 함께 날아다녀요! 어서 와요!'
+        }
       },
       {
-        emoji: '🎓', title: '선생님 / 교육 크리에이터',
-        from: '#7c3aed', to: '#0f766e',
+        title: '선생님 / 교육 크리에이터',
+        from: '#1a0a00', to: '#713f12',
         badge: '💛 영향력 직업',
         desc: '미래의 천재들을 키워내는 사람! 유튜브 선생님이 되면 100만 명에게 가르칠 수 있어요.',
         tip: '교육 유튜브 채널이 가장 빠르게 성장하는 카테고리예요.',
-        traits: ['책', '친구', '수학', '음악']
+        traits: ['책', '친구', '수학', '음악'],
+        pokemon: {
+          id: 25, name: '피카츄', type: '⚡ 전기타입', typeColor: '#eab308',
+          quote: '피카피카! 선생님이 최고야! 같이 공부해요, 피카!⚡'
+        }
       },
     ];
 
     const LOADING_MSGS = [
-      '관심사를 분석 중...',
-      '직업 데이터베이스 탐색 중...',
-      '운명을 계산하는 중...',
-      '딱 맞는 직업 찾았어! 🎉',
+      '포켓몬을 찾는 중...',
+      '적성 데이터를 분석 중...',
+      '포켓몬이 점치는 중...',
+      '딱 맞는 직업 발견! 🎉',
     ];
 
-    // ── Helpers ──────────────────────────────────────────
     function getSelectedTraits() {
       return [...document.querySelectorAll('.trait-btn.selected')].map(b => b.dataset.trait);
     }
 
     function pickCareers(selected) {
-      if (!selected.length) {
-        return [...CAREERS].sort(() => Math.random() - .5).slice(0, 3);
-      }
+      if (!selected.length) return [...CAREERS].sort(() => Math.random() - .5).slice(0, 3);
       const scored = CAREERS.map(c => ({
         ...c,
         score: c.traits.filter(t => selected.includes(t)).length + Math.random() * .6
@@ -336,35 +400,28 @@
       return scored.sort((a, b) => b.score - a.score).slice(0, 3);
     }
 
-    // ── Submit ────────────────────────────────────────────
     function handleSubmit() {
       const name = document.getElementById('nameInput').value.trim() || '지우서우';
-
-      // show loading
       document.getElementById('formSection').classList.add('hidden');
       document.getElementById('results').classList.add('hidden');
       document.getElementById('loading').classList.remove('hidden');
 
-      // cycle loading messages
-      let msgIdx = 0;
+      let idx = 0;
       const msgEl = document.getElementById('loadingMsg');
-      const interval = setInterval(() => {
-        msgIdx = (msgIdx + 1) % LOADING_MSGS.length;
-        msgEl.textContent = LOADING_MSGS[msgIdx];
+      const iv = setInterval(() => {
+        idx = (idx + 1) % LOADING_MSGS.length;
+        msgEl.textContent = LOADING_MSGS[idx];
       }, 600);
 
       setTimeout(() => {
-        clearInterval(interval);
-        const picked = pickCareers(getSelectedTraits());
-        renderResults(name, picked);
-
+        clearInterval(iv);
+        renderResults(name, pickCareers(getSelectedTraits()));
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
         document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 2400);
+      }, 2500);
     }
 
-    // ── Render Cards ──────────────────────────────────────
     function renderResults(name, picked) {
       document.getElementById('resultTitle').textContent =
         `${name}이(가) 커서 될 수 있는 직업 TOP 3! 🎊`;
@@ -376,36 +433,77 @@
       const ranks  = ['가장 잘 어울려요!', '꽤 잘 맞아요!', '이것도 좋아요!'];
 
       picked.forEach((c, i) => {
+        const artUrl    = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${c.pokemon.id}.png`;
+        const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.pokemon.id}.png`;
+
         const card = document.createElement('div');
-        card.className = 'career-card rounded-3xl overflow-hidden shadow-2xl border border-white/5';
-        card.style.animationDelay = `${i * .18}s`;
+        card.className = 'career-card rounded-3xl overflow-hidden shadow-2xl';
+        card.style.cssText = `animation-delay:${i * .2}s; border: 1px solid rgba(255,255,255,0.08);`;
 
         card.innerHTML = `
-          <div style="background:linear-gradient(135deg,${c.from},${c.to})" class="p-5 flex items-center gap-4">
-            <div class="text-6xl leading-none">${c.emoji}</div>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-1">
-                <span class="text-white/70 text-xs font-bold">${medals[i]} ${ranks[i]}</span>
-              </div>
-              <h3 class="text-2xl font-black text-white truncate">${c.title}</h3>
-              <span class="inline-block bg-black/25 backdrop-blur text-white/90 text-xs font-bold px-3 py-1 rounded-full mt-1.5">
+          <!-- Pokemon card top: gradient + image -->
+          <div class="relative" style="background:linear-gradient(160deg,${c.from} 0%,${c.to} 100%)">
+            <div class="holo"></div>
+
+            <!-- Top bar: medal | type badge -->
+            <div class="relative z-10 flex items-center justify-between px-5 pt-4">
+              <span class="text-xs font-black text-white/80 bg-black/30 backdrop-blur px-3 py-1.5 rounded-full">
+                ${medals[i]} ${ranks[i]}
+              </span>
+              <span class="text-xs font-black px-3 py-1.5 rounded-full text-white" style="background:${c.pokemon.typeColor}99">
+                ${c.pokemon.type}
+              </span>
+            </div>
+
+            <!-- Pokemon image -->
+            <div class="relative z-10 flex justify-center pt-3 pb-2">
+              <img
+                src="${artUrl}"
+                alt="${c.pokemon.name}"
+                class="pokemon-img w-44 h-44 object-contain"
+                onerror="this.src='${spriteUrl}';this.classList.remove('w-44','h-44');this.classList.add('w-24','h-24','pixel')"
+              >
+            </div>
+
+            <!-- Career title -->
+            <div class="relative z-10 text-center px-5 pb-5">
+              <h3 class="text-2xl font-black text-white drop-shadow-md">${c.title}</h3>
+              <span class="inline-block mt-1.5 text-xs font-bold px-3 py-1 rounded-full text-white bg-black/25 backdrop-blur">
                 ${c.badge}
               </span>
             </div>
           </div>
-          <div class="bg-gray-900 p-5">
-            <p class="text-gray-200 text-[15px] leading-relaxed mb-4">${c.desc}</p>
+
+          <!-- Card body -->
+          <div class="bg-gray-900 px-5 py-5">
+
+            <!-- Speech bubble -->
+            <div class="relative bg-gray-800 rounded-2xl rounded-tl-sm p-4 mb-5">
+              <!-- triangle pointing to pokemon -->
+              <div class="absolute -top-2.5 left-6 w-5 h-5 bg-gray-800 rotate-45 rounded-sm"></div>
+              <p class="text-[11px] font-black tracking-widest uppercase mb-1.5" style="color:${c.pokemon.typeColor}">
+                ${c.pokemon.name}
+              </p>
+              <p class="text-white text-sm font-bold leading-relaxed">
+                "${c.pokemon.quote}"
+              </p>
+            </div>
+
+            <!-- Description -->
+            <p class="text-gray-300 text-[15px] leading-relaxed mb-4">${c.desc}</p>
+
+            <!-- Tip -->
             <div class="bg-gray-800 rounded-2xl px-4 py-3 flex gap-2.5 items-start">
               <span class="text-yellow-400 shrink-0 mt-0.5">💡</span>
               <p class="text-gray-400 text-sm leading-relaxed">${c.tip}</p>
             </div>
           </div>
         `;
+
         container.appendChild(card);
       });
     }
 
-    // ── Reset ─────────────────────────────────────────────
     function resetForm() {
       document.getElementById('results').classList.add('hidden');
       document.getElementById('loading').classList.add('hidden');
@@ -415,19 +513,16 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // ── Share ─────────────────────────────────────────────
     function shareResult(btn) {
-      const name  = document.getElementById('nameInput').value.trim() || '지우서우';
-      const title = document.getElementById('resultTitle').textContent;
-      const text  = `${title}\n\n나도 미래 직업 찾기 → ${window.location.href}`;
-      const orig  = btn.innerHTML;
-
+      const name = document.getElementById('nameInput').value.trim() || '지우서우';
+      const text = `${name}이(가) 커서 될 직업을 포켓몬이 알려줬어요! 🔮\n나도 해보기 → ${window.location.href}`;
+      const orig = btn.innerHTML;
       if (navigator.share) {
         navigator.share({ title: '커서 뭐 되지? 🔮', text }).catch(() => {});
         return;
       }
       navigator.clipboard?.writeText(text).then(() => {
-        btn.innerHTML = '✅ 링크 복사됐어요!';
+        btn.innerHTML = '✅ 복사됐어요!';
         setTimeout(() => (btn.innerHTML = orig), 2200);
       });
     }
